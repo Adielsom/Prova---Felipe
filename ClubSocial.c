@@ -262,7 +262,7 @@ int main() {
                     registrarSocio(&socios[numSocios]);
                     numSocios++;
                 } else {
-                    printf("Erro: número máximo de sócios atingido.\n");
+                    printf("Número máximo de sócios atingido.\n");
                 }
                 break;
             case 2:
@@ -281,7 +281,7 @@ int main() {
                         }
                     }
                 } else {
-                    printf("Erro: nenhum sócio registrado.\n");
+                    printf("Nenhum sócio registrado.\n");
                 }
                 break;
             case 4:
@@ -297,7 +297,7 @@ int main() {
                         }
                     }
                 } else {
-                    printf("Erro: nenhum sócio registrado.\n");
+                    printf("Nenhum sócio registrado.\n");
                 }
                 break;
             case 5:
@@ -313,7 +313,7 @@ int main() {
                         }
                     }
                 } else {
-                    printf("Erro: nenhum sócio registrado.\n");
+                    printf("Nenhum sócio registrado.\n");
                 }
                 break;
             case 6:
@@ -329,14 +329,14 @@ int main() {
                         }
                     }
                 } else {
-                    printf("Erro: nenhum sócio registrado.\n");
+                    printf("Nenhum sócio registrado.\n");
                 }
                 break;
             case 7:
-                printf("Saindo...\n");
+                printf("programa encerrado!\n");
                 break;
             default:
-                printf("Opção inválida.\n");
+                printf("invalida.\n");
                 break;
         }
     } while (opcao != 7);

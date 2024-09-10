@@ -3,22 +3,25 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Definição das variaveis globais relacionadas ao número máximo de sócios, dependentes, candidatos e categorias
 #define MAX_socios 100
 #define MAX_dependentes 10
 #define MAX_categoria 3
 #define MAX_candidatos 50
 
-
+// Limites para o número máximo de dependentes permitidos por categoria
 #define MAX_bronze 3
 #define MAX_prata 7
 #define MAX_ouro 10
 
+// Estrutura que define uma Categoria com limite de dependentes e valor da mensalidade
 typedef struct {
     char descricao[50];
     int limiteDependentes;
     double valorMensalidade;
 } Categoria;
 
+// Estrutura para armazenar dados de um dependente
 typedef struct {
     long cartaoDependente;
     char nome[100];
@@ -26,6 +29,7 @@ typedef struct {
     char email[100];
 } Dependente;
 
+// Estrutura para armazenar informações de uma mensalidade
 typedef struct {
     char dataMensalidade[11]; // DD/MM/AAAA
     double valorMensalidade;
@@ -36,6 +40,8 @@ typedef struct {
     char dataVencimento[11]; // DD/MM/AAAA
 } Mensalidade;
 
+
+// Estrutura para armazenar dados de um sócio, incluindo dependentes e mensalidades
 typedef struct {
     long cartaoSocio;
     char nome[100];
@@ -49,6 +55,7 @@ typedef struct {
     int numMensalidades;
 } Socio;
 
+// Estrutura para armazenar dados de um candidato
 typedef struct {
     long cartaoCandidato;
     char nome[100];
@@ -58,7 +65,7 @@ typedef struct {
     Categoria categoria;
 } Candidato;
 
-
+// Função que converte uma string de data no formato DD/MM/AAAA para uma struct tm
 void converterData(const char *dataStr, struct tm *data) {
     sscanf(dataStr, "%d/%d/%d", &data->tm_mday, &data->tm_mon, &data->tm_year);
     data->tm_mon -= 1; // struct tm usa meses de 0 a 11
@@ -66,6 +73,7 @@ void converterData(const char *dataStr, struct tm *data) {
 }
 
 
+// Função que calcula a quantidade de dias de atraso entre a data da mensalidade e a data de pagamento
 int calAtraso(const char *dataMensalidade, const char *dataPagamento) {
     struct tm tmMensalidade = {0}, tmPagamento = {0};
     time_t tMensalidade, tPagamento;
@@ -84,7 +92,7 @@ int calAtraso(const char *dataMensalidade, const char *dataPagamento) {
     return (dias > 0) ? dias : 0;
 }
 
-
+// Função que calcula os juros de uma mensalidade com base nos dias de atraso
 void calcularJuros(Mensalidade *mensalidade) {
     int diasDeAtraso = calAtraso(mensalidade->dataVencimento, mensalidade->dataPagamento);
     if (diasDeAtraso > 0) {
@@ -94,7 +102,7 @@ void calcularJuros(Mensalidade *mensalidade) {
     }
 }
 
-
+// Função que define a categoria do sócio com base na descrição fornecida
 void definirCategoria(Socio *socio) {
     if (strcmp(socio->categoria.descricao, "bronze") == 0) {
         socio->categoria.limiteDependentes = MAX_bronze;
@@ -111,7 +119,7 @@ void definirCategoria(Socio *socio) {
     }
 }       
 
-
+// Função que registra um novo sócio, coletando dados do usuário
 void registrarSocio(Socio *socio) {
     printf("Digite o numero do cartão do socio: ");
     scanf("%ld", &socio->cartaoSocio);
@@ -128,7 +136,7 @@ void registrarSocio(Socio *socio) {
     printf("Digite o e-mail do socio: ");
     fgets(socio->email, 100, stdin);
     socio->email[strcspn(socio->email, "\n")] = '\0';
-
+// Define a categoria do sócio
     printf("Digite categoria (bronze, prata, ouro): ");
     fgets(socio->categoria.descricao, 50, stdin);
     socio->categoria.descricao[strcspn(socio->categoria.descricao, "\n")] = '\0';
@@ -139,7 +147,7 @@ void registrarSocio(Socio *socio) {
     socio->numMensalidades = 0;
 }
 
-
+// Função que consulta todos os sócios registrados
 void consultarSocios(const Socio *socios, int numSocios) {
     for (int i = 0; i < numSocios; i++) {
         printf("\nSocio %d:\n", i + 1);
@@ -152,7 +160,7 @@ void consultarSocios(const Socio *socios, int numSocios) {
     }
 }
 
-
+//Essa função registra um dependente para um sócio, garantindo que o limite de dependentes da categoria seja respeitado.
 void registrarDependente(Socio *socio) {
     if (socio->numDependentes < socio->categoria.limiteDependentes) {
         Dependente *dependente = &socio->dependentes[socio->numDependentes];
@@ -175,7 +183,7 @@ void registrarDependente(Socio *socio) {
     }
 }
 
-
+//Essa função exibe os detalhes de todos os dependentes registrados de um sócio.
 void consultarDependentes(const Socio *socio) {
     for (int i = 0; i < socio->numDependentes; i++) {
         const Dependente *dependente = &socio->dependentes[i];
@@ -187,7 +195,7 @@ void consultarDependentes(const Socio *socio) {
     }
 }
 
-
+//Essa função coleta os dados de um candidato e o registra no sistema, com base no limite de candidatos.
 void registrarCandidato(Candidato *candidato, int *numCandidatos) {
     if (*numCandidatos < MAX_candidatos) {
         printf("Digite o numero do cartão do candidato: ");
@@ -218,7 +226,8 @@ void registrarCandidato(Candidato *candidato, int *numCandidatos) {
 }
 
 
- 
+ //Essa função registra uma nova mensalidade para um sócio, calculando os juros e verificando se a mensalidade foi quitada.
+
 void registrarMensalidade(Socio *socio) {
     if (socio->numMensalidades < MAX_socios) {
         Mensalidade *mensalidade = &socio->mensalidades[socio->numMensalidades];
@@ -248,7 +257,7 @@ void registrarMensalidade(Socio *socio) {
 }
 
 
-
+//Essa função exibe todas as mensalidades registradas de um sócio, com informações detalhadas.
 void consultarMensalidades(const Socio *socio) {
     for (int i = 0; i < socio->numMensalidades; i++) {
         const Mensalidade *mensalidade = &socio->mensalidades[i];
@@ -282,77 +291,77 @@ int main() {
         printf("0.        FINALIZAR!\n");
         printf("       ESCOLHA UMA OPÇÃO: ");
         scanf("%d", &opcao);
-        getchar();
+        getchar();// Remove o '\n' deixado pelo scanf
 
         switch (opcao) {
             case 1:
-                registrarSocio(&socios[numSocios]);
-                numSocios++;
+                registrarSocio(&socios[numSocios]);// Registra um novo sócio
+                numSocios++;// Incrementa o número de sócios
                 break;
             case 2:
-                consultarSocios(socios, numSocios);
+                consultarSocios(socios, numSocios);// Exibe a lista de sócios registrados
                 break;
             case 3: {
-                long cartaoSocio;
+                long cartaoSocio;// Caso o usuário queira registrar dependentes
                 printf("Digite o cartão do socio: ");
                 scanf("%ld", &cartaoSocio);
                 getchar();
-
+                // Busca o sócio correspondente ao número do cartão
                 for (int i = 0; i < numSocios; i++) {
                     if (socios[i].cartaoSocio == cartaoSocio) {
-                        registrarDependente(&socios[i]);
+                        registrarDependente(&socios[i]);// Adiciona o dependente ao sócio
                         break;
                     }
                 }
                 break;
             }
             case 4: {
-                long cartaoSocio;
+                long cartaoSocio;// Caso o usuário queira consultar os dependentes
                 printf("Digite o cartão do socio: ");
                 scanf("%ld", &cartaoSocio);
                 getchar();
-
+               // Busca o sócio correspondente ao número do cartão
                 for (int i = 0; i < numSocios; i++) {
                     if (socios[i].cartaoSocio == cartaoSocio) {
-                        consultarDependentes(&socios[i]);
+                        consultarDependentes(&socios[i]);// Exibe os dependentes do sócio
                         break;
                     }
                 }
                 break;
             }
             case 5: {
-                long cartaoSocio;
+                long cartaoSocio;// Caso o usuário queira registrar uma mensalidade
                 printf("Digite o cartão do socio: ");
                 scanf("%ld", &cartaoSocio);
                 getchar();
-
+              // Busca o sócio correspondente ao número do cartão
                 for (int i = 0; i < numSocios; i++) {
                     if (socios[i].cartaoSocio == cartaoSocio) {
-                        registrarMensalidade(&socios[i]);
+                        registrarMensalidade(&socios[i]);// Registra a mensalidade para o sócio
                         break;
                     }
                 }
                 break;
             }
             case 6: {
-                long cartaoSocio;
+                long cartaoSocio; // Caso o usuário queira consultar as mensalidades
                 printf("Digite o cartão do socio: ");
                 scanf("%ld", &cartaoSocio);
                 getchar();
-
+                // Busca o sócio correspondente ao número do cartão
                 for (int i = 0; i < numSocios; i++) {
                     if (socios[i].cartaoSocio == cartaoSocio) {
-                        consultarMensalidades(&socios[i]);
+                        consultarMensalidades(&socios[i]);// Exibe as mensalidades do sócio
                         break;
                     }
                 }
                 break;
             }
             case 7:
-                registrarCandidato(candidatos, &numCandidatos);
+                registrarCandidato(candidatos, &numCandidatos);// Registra um novo candidato
                 break;
         }
-    } while (opcao != 0);
+    } while (opcao != 0);// O loop continua até que o usuário escolha a opção para finalizar
 
     return 0;
 }

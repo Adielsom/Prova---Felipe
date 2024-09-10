@@ -281,6 +281,7 @@ int main() {
     int opcao;
     do {
         printf("=========MENU PRINCIPAL=========");
+        printf("\n          CLUBE SOCIAL      ");
         printf("\n1.      REGISTRAR SOCIOS\n");
         printf("2.      CONSULTAR SOCIOS\n");
         printf("3.   REGISTRAR DEPENDENTES\n");
